@@ -1,0 +1,77 @@
+﻿@*@model IEnumerable<Newsopedia.Services.Models.DateUrlVm>*@
+@model IEnumerable<Newsopedia.Services.NewsopediaOldModels.UserNewsVm>
+
+
+@{
+
+
+    if (Model != null)
+    {
+        var date1 = "";
+        int i = 0;
+        @foreach (var item in Model)
+        {
+
+            if (@item.DateVm != date1)
+            {
+                var id = "historydate" + @i;
+                //var UserID = @item.UserIDVm;
+                <a id="@id" href="#" onclick='SendDate("@id", "@item.UserIdVm")'>@item.DateVm</a>
+                date1 = @item.DateVm;
+                <br />
+
+            }
+
+            i++;
+        }
+    }
+
+}
+<script>
+    $('a').click(function () { $(this).css({ 'font-weight': 'bold' }) })
+
+    function SendDate(idabc, user_id) {
+        console.log("date sent");
+        var clickedDate = $("#" + idabc).text();
+        var userId = user_id;
+        console.log("userId:", userId);
+        console.log(clickedDate);
+
+        var DateClicked = {
+
+            "DateVm": clickedDate,
+            "UserIdVm": userId
+        }
+
+        console.log(DateClicked);
+        $.ajax({
+            url: "/Home/_HistoryPerDate/",
+            method: "POST",
+            /*data: (obj),
+            contentType: "application/json; charset=utf-8",
+            dataType : "application/json", */
+            data: DateClicked,
+            /* data: jsonModelVm,*/
+
+            success: function (data) {
+                console.log(data);
+                $('#History-Links-Partial').html(data);
+                $('.news-list').empty();
+                $('.delete-admin-news').empty();
+                /*$('#News-Description').empty();*/
+
+            },
+            error: function (err) {
+                console.log("this is error:" + err);
+            }
+
+
+
+        })
+
+
+    }
+
+
+
+</script>

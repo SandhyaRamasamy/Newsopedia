@@ -1,0 +1,163 @@
+﻿@{
+    ViewData["Title"] = "Account Home";
+}
+@model Newsopedia.Services.NewsopediaOldModels.NewsopediaOldUserVm
+   
+        <nav class="navbar navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand">Newsopedia</a>
+               
+                <form class="d-flex search-form">
+                    <input class="form-control me-2 search-box" type="search" placeholder="Search News" aria-label="Search">
+                    <button class="btn btn-outline-success search-button" type="submit">Search</button>
+                </form>
+                <a href="/Home/LogoutPage">Logout</a>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-4">
+
+                    <button type="button" id="history-button">History</button>
+                    <div id="historyLinks">
+
+                    </div>
+                </div>
+                <div class="col-8">
+                    <span> Welcome </span>
+                    <span id="UserEmail">@ViewBag.sessionV </span>
+
+                    <div id="History-Links-Partial">
+
+                    </div>
+                    <div class="list-container">
+                       
+                        <ul class="news-list">
+                        </ul>
+
+                    </div>
+                    <div class="delete-admin-news">
+
+                    </div>
+                    
+
+                </div>
+
+            </div>
+        </div>
+ 
+        <script>
+        console.log("readable script");
+        const searchForm = document.querySelector('.search-form');
+        const input = document.querySelector('.search-box');
+        const newsList = document.querySelector('.news-list');
+
+        searchForm.addEventListener('submit', retrieve)
+        function retrieve(e) {
+            if (input.value == '') {
+                alert('Search News field is empty!');
+            }
+            newsList.innerHTML=''
+            e.preventDefault()
+            const apiKey = 'fde268210644461bbfb4d691f2a33b11'
+            let topic = input.value
+            let url = `https://newsapi.org/v2/everything?q=${topic}&apiKey=${apiKey}`
+            fetch(url).then((res) => {
+                return res.json()
+
+            }).then((data) => {
+                console.log(data);
+                $('#History-Links-Partial').empty();
+                $('#News-Description').empty();
+                $('#historyLinks').empty();
+                
+
+               
+                data.articles.forEach(article => {
+                    console.log('data.articles');
+                    let li = document.createElement('li');
+                    let a = document.createElement('a');
+                    a.className = ("news-links");
+                    a.onclick = function () {
+                        var linkUrl = article.url;
+                        var linkTitle = article.title;
+                        var linkDescription = article.description;
+                        var linkImageUrl = article.urlToImage;
+                        var loggedInUserEmail = document.getElementById("UserEmail").innerHTML;
+                        console.log("loggedInUserEmail ",loggedInUserEmail )
+                        console.log("linkUrl",linkUrl);
+                        console.log("linkTitle", linkTitle);
+                        console.log("linkDescription", linkDescription);
+                        console.log("linkImageUrl", linkImageUrl);
+                        var obj = {
+                            TitleVm: linkTitle,
+                            URLVm: linkUrl,
+                            UserEmailVm: loggedInUserEmail,
+                            DescriptionVm: linkDescription,
+                            URLToImageVm: linkImageUrl
+                        }
+                        SendDataToController(obj);
+                    }
+                    
+                    a.setAttribute('href', article.url);
+                    a.setAttribute('target', '_blank');
+                    a.textContent = article.title;
+                    li.appendChild(a);
+                    newsList.appendChild(li);
+                
+
+                })
+            }).catch((error) => {
+                console.log(error)
+            })
+
+        }
+        function SendDataToController(obj) {
+            console.log("OBJ =", obj);
+            $.ajax({
+               /* url: "/Home/GetJsonData/",*/
+                url: "/Home/CheckUrlInNewsTable/",
+                method: "POST",
+                data :  obj,
+                success: function (data) { 
+                    console.log(data);
+                },
+                error: function (err) {
+                    console.log("this is error:" + err);
+                }
+            })
+        }
+
+        var historyButton = document.getElementById("history-button");
+        historyButton.onclick = function () {
+            var userEmail = document.getElementById("UserEmail").innerHTML;
+            var email =  {
+
+                UserEmailaddressVm: userEmail
+            }
+            $.ajax({
+                url: "/Home/GetEmail/",
+                method: "POST",
+                data: email,
+                success: function (data) { 
+                    console.log(data);
+                    DisplayHistoryLinks(data);
+
+                },
+                error: function (err) {
+                    console.log("this is error:" + err);
+                }
+
+
+
+            })
+
+            console.log("history button clicked");
+            }
+            function DisplayHistoryLinks(data) {
+                $('#historyLinks').html(data);
+
+            }
+
+
+        </script>

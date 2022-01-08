@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Home Page|Login";
+}
+@model Newsopedia.Services.NewsopediaOldModels.NewsopediaOldUserVm
+    <a href="/Home/GetTopUsers">Top 5 Users</a>
+<h1 class="Login-title">Newsopedia</h1>
+    <div> 
+        <form asp-action="CheckCredentialsFunction">
+            <div class="Login-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                <h2 class="heading2-login">Login</h2>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <input asp-for="EmailVm" placeholder="email address" />
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <input asp-for="PasswordVm" type="password" placeholder="password" />
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <button type="submit" class="login-button">Login</button>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <p>New User?<a href="/Home/Register">Register here</a></p>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </form>
+    </div>

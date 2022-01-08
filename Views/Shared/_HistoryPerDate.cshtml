@@ -1,0 +1,128 @@
+﻿@*@model IEnumerable<Newsopedia.Services.Models.DateUrlVm>*@
+@model IEnumerable<Newsopedia.Services.NewsopediaOldModels.ConcatenatedTableVm>    
+
+@{
+
+
+    if (Model != null)
+    {
+        @*<span>Search History</span>*@
+        var newsTitle = "";
+        @foreach (var item in Model)
+        {
+            if (@item.NewsTitleVm != newsTitle)
+            {
+                if (@ViewBag.sessionV == "admin")
+                {
+                    <div class="full-news">
+                        <a href="#"> <i onclick="ShowPrevious()" class="fas fa-chevron-circle-left previous-icon"></i></a>
+                        <a href="#"><i id="next-icon-id" onclick="ShowNext()" class="fas fa-chevron-circle-right next-icon"></i></a>
+
+                        <h3>@item.NewsTitleVm</h3>
+                        <img class="news-image" src="@item.NewsImageUrlVm" />
+                        <p class="news-description">@item.NewsDescriptionVm</p>
+                        <button class="Delete-btn" onclick="DeleteItem(@item.UserNewsIdVm)" type="button">Delete</button>
+
+                    </div>
+                    newsTitle = @item.NewsTitleVm;
+
+                }
+                else
+                {
+                    <div class="full-news">
+                        <a href="#"><i onclick="ShowPrevious()" class="fas fa-chevron-circle-left previous-icon"></i></a>
+                        <a href="#"><i id="next-icon-id" onclick="ShowNext()" class="fas fa-chevron-circle-right next-icon"></i></a>
+
+                        <h3>@item.NewsTitleVm</h3>
+                        <img class="news-image" src="@item.NewsImageUrlVm" />
+                        <p class="news-description">@item.NewsDescriptionVm</p>
+                       
+
+                    </div>
+                    newsTitle = @item.NewsTitleVm;
+
+                }
+
+            }
+
+
+        }
+
+    }
+}
+<script>
+        var visibleDiv=0;
+        console.log('visible Div', visibleDiv);
+        ShowDiv();
+        if (visibleDiv==$('.full-news').length - 1) {
+            $('.previous-icon').hide();
+            $('.next-icon').hide();
+        }
+        else {
+            $('.previous-icon').hide();
+        }
+        function ShowNext() {
+            visibleDiv++;
+            console.log('visible Div', visibleDiv);
+            if (visibleDiv == $('.full-news').length - 1)
+            {
+                ShowDiv();
+                $('.next-icon').hide();
+                $('.previous-icon').show();
+            }
+            else {
+                ShowDiv();
+                ShowBothIcons();
+            }
+        }
+        function ShowPrevious() {
+            visibleDiv--;
+            console.log('visible Div', visibleDiv);
+            if (visibleDiv == 0)
+            {
+                ShowDiv();
+                $('.previous-icon').hide();
+                $('.next-icon').show();
+            }
+            else {
+                ShowDiv();
+                ShowBothIcons();
+            }   
+        }
+        function DeleteItem(user_news_id) {
+            var userNewsId = user_news_id;
+            console.log(userNewsId);
+                var itemClicked={
+                    //NewsIdVm: itemId,
+                    //DateVm: itemDate
+                    UserNewsIdVm: userNewsId
+                        }
+                console.log(itemClicked);
+            $.ajax({
+                url: "/Home/DeleteItem/" ,
+                method: "POST" ,
+                data: itemClicked,
+                success: function (data) {
+                    console.log(data);
+                    $('.delete-admin-news').html(data);
+                    $('#History-Links-Partial').empty();
+                    $('.news-list').empty();
+                },
+                error: function (err) {
+                console.log("this is error:" + err);
+                    }
+            })
+        }
+    function ShowDiv()
+    {
+      $('.full-news').hide();
+       $('.full-news:eq(' + visibleDiv + ')' ).show();
+     }
+    function ShowBothIcons()
+    {
+        $('.previous-icon').show();
+        $('.next-icon').show();
+     }
+      
+</script>
+
