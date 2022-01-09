@@ -5,6 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Newsopedia.Data\**" />
+    <Compile Remove="Newsopedia.Services\**" />
+    <Content Remove="Newsopedia.Data\**" />
+    <Content Remove="Newsopedia.Services\**" />
+    <EmbeddedResource Remove="Newsopedia.Data\**" />
+    <EmbeddedResource Remove="Newsopedia.Services\**" />
+    <None Remove="Newsopedia.Data\**" />
+    <None Remove="Newsopedia.Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="JSONRequest.Net" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
@@ -21,8 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Newsopedia.Data\Newsopedia.Data.csproj" />
-    <ProjectReference Include="..\Newsopedia.Services\Newsopedia.Services.csproj" />
+    <ProjectReference Include="Newsopedia.Services\Newsopedia.Services.csproj" />
   </ItemGroup>
 
 </Project>
