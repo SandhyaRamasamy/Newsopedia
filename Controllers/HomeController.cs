@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newsopedia.Models;
 using Newsopedia.Services;
-//using Newsopedia.Services.Models;
 using Newsopedia.Services.NewsopediaOldModels;
 using System.Collections.Generic;
 using System.Diagnostics;
-
 
 namespace Newsopedia.Controllers
 {
@@ -15,82 +14,55 @@ namespace Newsopedia.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly INewsopediaService _newsopediaService;
-       
-
-        public HomeController(INewsopediaService newsopediaService, ILogger<HomeController> logger)
+        private readonly IConfiguration _configuration;
+        public HomeController(INewsopediaService newsopediaService, ILogger<HomeController> logger, IConfiguration configuration)
         {
             _logger = logger;
             _newsopediaService = newsopediaService;
+            _configuration = configuration;
         }
-
+        /// <summary>
+        /// Login Page
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Index()
         {
-            //HttpContext.Session.SetString("UserName", "sandhya9028@gmail.com");
-
-            //return RedirectToAction("LoginSuccess");
             return View();
         }
-        
-
         public IActionResult Privacy()
         {
             return View();
         }
+        /// <summary>
+        /// Registration Page 
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Register()
         {
             return View("Register");
         }
-        /***********************************/
-        /*Migrated to a new database        */
-        /***********************************/
-        //public IActionResult RegisterFunction(UserVm user)
-        //{
-        //    _newsopediaService.RegisterUser(user);
-        //    return View("Index");
-        //}
-        /****************************************/
-        /* Regisering the user details into a new table in the 
-        /* new database
-        //****************************************/
+        /// <summary>
+        /// Regisering the user details into the table in the
+        /// database
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>Index</returns>
         public IActionResult RegisterFunction(NewsopediaOldUserVm user)
         {
             _newsopediaService.RegisterUser(user);
             return View("Index");
         }
-
-        //-----------------------------------------------------
-        //-This part of code uses tables from 'Test' database.
-        //-This is migrated to 'NewsopediaOld' database
-        //----------------------------------------------------
-        //public IActionResult CheckCredentialsFunction(UserVm user)
-        //{
-
-        //   var loginStatus= _newsopediaService.CheckLogin(user);
-        //   if (loginStatus == true)
-        //   {
-
-        //        HttpContext.Session.SetString("UserName", user.EmailVm);
-
-        //       return RedirectToAction("LoginSuccess");
-        //    }
-        //    else
-        //   {
-        //       return RedirectToAction("LoginFailed");
-        //   }
-        //}
-
-        //-------------------------------------------------
-        //-Authenticating the User credentials
-        //-----------------------------------------------
+        /// <summary>
+        /// Authenticating the User credentials
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>Successful login (or) Login failed</returns>
         public IActionResult CheckCredentialsFunction(NewsopediaOldUserVm user)
         {
-
-            var loginStatus = _newsopediaService.CheckLogin(user);
+            var loginStatus = _newsopediaService.AuthenticateUser(user);
             if (loginStatus == true)
             {
-
-                HttpContext.Session.SetString("UserName", user.EmailVm);
-
+                HttpContext.Session.SetString("UserName", user.Email);
                 return RedirectToAction("LoginSuccess");
             }
             else
@@ -98,25 +70,33 @@ namespace Newsopedia.Controllers
                 return RedirectToAction("LoginFailed");
             }
         }
+        /// <summary>
+        /// Lists the top 5 users (5 users who have searched the
+        /// most news items
+        /// </summary>
+        /// <returns></returns>
         public IActionResult GetTopUsers()
         {
-            List<GetTopUsersVm> topUsersVm = new List<GetTopUsersVm>();
-            topUsersVm=_newsopediaService.GetTopFiveUsers(); 
+            var topUsersVm = _newsopediaService.GetTopThreeUsers();
             return View(topUsersVm);
         }
+        /// <summary>
+        /// When the user authentication fails, control gets navigated to this page
+        /// </summary>
+        /// <returns></returns>
         public IActionResult LoginFailed()
         {
             return View();
         }
-
-
+        /// <summary>
+        /// Retrieves the UserName of the user after successful authentication
+        /// </summary>
+        /// <returns></returns>
         public IActionResult LoginSuccess()
-
         {
             if (HttpContext.Session.GetString("UserName") != null)
             {
-
-                ViewBag.sessionV = HttpContext.Session.GetString("UserName");
+                ViewBag.sessionVar = HttpContext.Session.GetString("UserName");
                 return View();
             }
             else
@@ -124,111 +104,82 @@ namespace Newsopedia.Controllers
                 return View("Index");
             }
         }
-        //------------------------------------------------
-        ///-This part of code uses tables from 'Test' database.
-        //-This is migrated to 'NewsopediaOld' database
-        //------------------------------------------------
-        //[HttpPost]
-        //public IActionResult GetJsonData(JsonModelVm jsonModelVm)
-        //{
-
-        //    _newsopediaService.updateDateuRLTable(jsonModelVm);
-
-
-        //    return View("
-        //
-        //    Success");
-        //}
-        //------------------------------------------------
-        //-Check if the clicked url already exists in the 
-        //News Table
-        //----------------------------------------------
+        /// <summary>
+        /// Check if the clicked url already exists in the News Table
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
-        public IActionResult CheckUrlInNewsTable(JsonModelVm jsonModelVm)
+        public IActionResult CheckExistenceOfNewsInNewsTable(NewsArticleVm newsArticleVm)
         {
-
-            _newsopediaService.CheckNewsTable(jsonModelVm);
-
-
+            _newsopediaService.CheckNewsTableIfArticleExists(newsArticleVm);
             return View("LoginSuccess");
         }
-        //------------------------------------------------
-        ///-This part of code uses tables from 'Test' database.
-        //-This is migrated to 'NewsopediaOld' database
-        //------------------------------------------------
-
-        //[HttpPost]
-        //public PartialViewResult GetEmail(EmailAddressVm emailAddressVm)
-        //{
-
-        //    List<DateUrlVm> dateUrlsVm = _newsopediaService.DisplayHistoryLinks(emailAddressVm);
-        //    return PartialView("_History", dateUrlsVm);
-        //}
-
-        //--------------------------------------------------------
-        //Receives the user email and displays the history of dates visted 
-        //by the user
-        //----------------------------------------------------------
+        /// <summary>
+        /// Receives the user email and displays the history dates
+        /// visted by the user
+        /// </summary>
+        /// <param name="emailAddressVm"></param>
+        /// <returns>History</returns>
         [HttpPost]
-        public PartialViewResult GetEmail(EmailAddressVm emailAddressVm)
+        public PartialViewResult GetEmailAddressOfUserLoggedIn(EmailAddressVm emailAddressVm)
         {
-
-            List<UserNewsVm> userNewsVms = _newsopediaService.DisplayHistoryDates(emailAddressVm);
-           return PartialView("_History", userNewsVms);
+            var userNewsVms = _newsopediaService.DisplayHistoryDatesOfUser(emailAddressVm);
+            return PartialView("_History", userNewsVms);
         }
-        //------------------------------------------------
-        ///-This part of code uses tables from 'Test' database.
-        //-This is migrated to 'NewsopediaOld' database
-        //------------------------------------------------
-        //public PartialViewResult _HistoryPerDate(DateUrlVm dateUrlVm)
-        //{
-        //    ViewBag.sessionV = HttpContext.Session.GetString("UserName");
-        //    List<DateUrlVm> dateUrlsVm= _newsopediaService.RetrieveNewsLinks(dateUrlVm);
-        //    return PartialView(dateUrlsVm);
-        //}
-        //------------------------------------------------------
-        //-Gets the user date and news Id, to display teh news that were 
-        //viewed by the user earlier
-        //----------------------------------------------------
-        public PartialViewResult _HistoryPerDate(UserNewsVm userNewsVm)
+        /// <summary>
+        /// Gets the History Date clicked and NewsId, to display the
+        /// news that were viewed by the user earlier
+        /// </summary>
+        /// <param name="userNewsVm"></param>
+        /// <returns></returns>
+        public PartialViewResult NewsArticlesViewedByUserOnADate(UserNewsVm userNewsVm)
         {
             ViewBag.sessionV = HttpContext.Session.GetString("UserName");
-            List<ConcatenatedTableVm> newsViewed =_newsopediaService.RetrieveNewsHistory(userNewsVm);
-            return PartialView(newsViewed);
+            List<ConcatenatedTableVm> newsViewed = _newsopediaService.RetrieveNewsFromHistory(userNewsVm);
+            return PartialView("_HistoryPerDate",newsViewed);
         }
-        //------------------------------------------------
-        ///-This part of code uses tables from 'Test' database.
-        //-This is migrated to 'NewsopediaOld' database
-        //------------------------------------------------
-
-        //public IActionResult DeleteItem(DateUrlVm dateUrlVm)
-        //{
-        //    _newsopediaService.DeleteNewsItem(dateUrlVm);
-        //    return PartialView("_DeleteAdminItem");
-        //}
-        //--------------------------------------------
-        //Gets the NewsId to be deleted from screen
-        //Checks the UserNewsTable for its existence and deltes the 
-        //same
-        //--------------------------------------------------
-        public IActionResult DeleteItem(UserNewsVm userNewsVm)
+        /// <summary>
+        /// Gets the NewsId to be deleted from screen and checks the
+        /// UserNewsTable for its existence and deletes the same
+        /// </summary>
+        /// <param name="userNewsVm"></param>
+        /// <returns></returns>
+        public IActionResult DeleteNewsItem(UserNewsVm userNewsVm)
         {
             _newsopediaService.DeleteNewsItem(userNewsVm);
             return PartialView("_DeleteAdminItem");
         }
-
+        /// <summary>
+        /// When the user clicks logout button, the control gets navigated to this page
+        /// </summary>
+        /// <returns></returns>
         public IActionResult LogoutPage()
         {
             HttpContext.Session.Remove("UserName");
             return View();
         }
-
-
+        /// <summary>
+        /// Gets the News API url from appsettings.json file.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public JsonResult GetNewsApiUrl()
+        {
+            return Json(_configuration.GetValue<string>("NewsApiUrl"));
+        }
+        /// <summary>
+        /// Gets the API key from appsettings.json file
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public JsonResult GetNewsApiKey()
+        {
+            return Json(_configuration.GetValue<string>("NewsApiKey"));
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        
     }
 }

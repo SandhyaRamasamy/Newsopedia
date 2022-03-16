@@ -1,10 +1,9 @@
 ﻿@model IEnumerable<Newsopedia.Services.NewsopediaOldModels.GetTopUsersVm>
-@{ 
+@{
     <h1>Top 3 Users</h1>
-    @foreach(var item in Model)
-            {
-        <span> @item.FirstNameVm @item.LastNameVm</span>
-               
-                <br />
-            }
+    @foreach (var item in Model)
+    {
+        <span> @item.FirstName @item.LastName</span>
+        <br />
+    }
 }

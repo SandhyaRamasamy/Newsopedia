@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Newsopedia.Data;
-//using Newsopedia.Data.Entities;
 using Newsopedia.Data.Models;
-//using Newsopedia.Services.Models;
 using Newsopedia.Services.NewsopediaOldModels;
 using System;
 using System.Collections.Generic;
@@ -13,20 +11,13 @@ namespace Newsopedia.Services
     public interface INewsopediaService
     {
         public void RegisterUser(NewsopediaOldUserVm user);
-        public bool CheckLogin(NewsopediaOldUserVm userVm);
-        public void CheckNewsTable(JsonModelVm jsonModelVm);
-        public List<UserNewsVm> DisplayHistoryDates(EmailAddressVm emailAddressVm);
-        public List<ConcatenatedTableVm> RetrieveNewsHistory(UserNewsVm userNewsVm);
+        public bool AuthenticateUser(NewsopediaOldUserVm userVm);
+        public void CheckNewsTableIfArticleExists(NewsArticleVm newsArticleVm);
+        public List<UserNewsVm> DisplayHistoryDatesOfUser(EmailAddressVm emailAddressVm);
+        public List<ConcatenatedTableVm> RetrieveNewsFromHistory(UserNewsVm userNewsVm);
         public void DeleteNewsItem(UserNewsVm userNews);
-        public List<GetTopUsersVm> GetTopFiveUsers();
-
-        //public void updateDateuRLTable(JsonModelVm jsonModelVm);
-        //public List<DateUrlVm> DisplayHistoryLinks(EmailAddressVm emailAddressVm);
-        //public List<DateUrlVm> RetrieveNewsLinks(DateUrlVm dateUrlVm);
-        //public void DeleteNewsItem(DateUrlVm dateUrlVm);
-
+        public List<GetTopUsersVm> GetTopThreeUsers();
     }
-
     public class NewsopediaService : INewsopediaService
     {
         private INewsopediaRepository _newsopediaRepository;
@@ -37,30 +28,10 @@ namespace Newsopedia.Services
             _newsopediaRepository = newsopediaRepository;
             _mapper = mapper;
             _logger = logger;
-
         }
-        //-------------------------------------
-        //-This part of code uses tables from 'Test' database.
-        //-This is migrated to 'NewsopediaOld' database
-        //-------------------------------------
-        //public void RegisterUser(UserVm userVm)
-        //{
-        //    try
-        //    {
-        //     var newUser = _mapper.Map<User>(userVm);
-        //        _newsopediaRepository.RegisterNewUser(newUser);
-        //    }
-        //    catch (Exception e)
-        //    {
-
-        //        _logger.LogError(e.ToString());
-        //    }
-
-        //}
-        //------------------------------------------
-        //Registering the user details to the new --
-        // database NewsopediaOld                 --
-        //------------------------------------------
+        /// <summary>
+        /// Register the user details in the database
+        /// </summary>
         public void RegisterUser(NewsopediaOldUserVm userVm)
         {
             try
@@ -70,117 +41,119 @@ namespace Newsopedia.Services
             }
             catch (Exception e)
             {
-
                 _logger.LogError(e.ToString());
             }
-
         }
-        //-----------------------------------------------
-        //-This part of code uses tables from 'Test' database.
-        //-This is migrated to 'NewsopediaOld' database
-        //-
-        //------------------------------------------------
-        //public bool CheckLogin(UserVm userVm)
-        //{
-        //    var loginUser = _mapper.Map<Data.Entities.User>(userVm);
-        //    return _newsopediaRepository.LoginCheck(loginUser);
-        //}
-        public bool CheckLogin(NewsopediaOldUserVm userVm)
+        /// <summary>
+        /// Authenticates the user with the credentials
+        /// </summary>
+        /// <param name="userVm"></param>
+        /// <returns></returns>
+        public bool AuthenticateUser(NewsopediaOldUserVm userVm)
         {
-            var loginUser = _mapper.Map<User>(userVm);
-            return _newsopediaRepository.LoginCheck(loginUser);
+            var loginStatus = false;
+            try
+            {
+               var loginUser = _mapper.Map<User>(userVm);
+               loginStatus = _newsopediaRepository.AuthenticateUser(loginUser);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return loginStatus;
         }
-        //------------------------------------------------
-        ///-This part of code uses tables from 'Test' database.
-        //-This is migrated to 'NewsopediaOld' database
-        //------------------------------------------------    
-
-        //public void updateDateuRLTable(JsonModelVm jsonModelVm)
-        //{
-        //    var newsClicked = _mapper.Map<JsonModel>(jsonModelVm);
-        //    _newsopediaRepository.DateURLTableupdate(newsClicked);
-        //}
-
-        //------------------------------------------------
-        //-Check if the clicked url already exists in the
-        //News Table
-        //----------------------------------------------
-        public void CheckNewsTable(JsonModelVm jsonModelVm)
+        /// <summary>
+        /// Check the NewsTable if the news item exists already
+        /// </summary>
+        /// <param name="newsArticleVm"></param>
+        public void CheckNewsTableIfArticleExists(NewsArticleVm newsArticleVm)
         {
-            var newsClicked = _mapper.Map<JsonModel>(jsonModelVm);
-            _newsopediaRepository.NewsTableCheckUrl(newsClicked);
-
+            try
+            {
+                var newsItemClicked = _mapper.Map<NewsArticle>(newsArticleVm);
+                _newsopediaRepository.CheckIfNewsArticleExistsInDb(newsItemClicked);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
         }
-        //------------------------------------------------
-        ///-This part of code uses tables from 'Test' database.
-        //-This is migrated to 'NewsopediaOld' database
-        //------------------------------------------------ 
-
-        //public List<DateUrlVm> DisplayHistoryLinks(EmailAddressVm emailAddressVm)
-        //{
-        //    var loggedInUserEmail = _mapper.Map<EmailAddress>(emailAddressVm);
-        //    List<DateUrlVm> dateUrls = _mapper.Map<List<DateUrlVm>>(_newsopediaRepository.HistoryLinksDisplay(loggedInUserEmail));
-        //    return dateUrls;
-        //}
-        //--------------------------------------------------------
-        //Receives the user email and displays the history of dates visted 
-        //by the user
-        //----------------------------------------------------------
-        public List<UserNewsVm> DisplayHistoryDates(EmailAddressVm emailAddressVm)
+        /// <summary>
+        /// Retrieves all the dates that the user viewed the news
+        /// </summary>
+        /// <param name="emailAddressVm"></param>
+        /// <returns></returns>
+        public List<UserNewsVm> DisplayHistoryDatesOfUser(EmailAddressVm emailAddressVm)
         {
-            var loggedInUserEmail = _mapper.Map<EmailAddress>(emailAddressVm);
-            List<UserNewsVm> historyDates = _mapper.Map<List<UserNewsVm>>(_newsopediaRepository.HistoryDatesDisplay(loggedInUserEmail));
-            return historyDates;
+            var historyDatesOfUser = new List<UserNewsVm>();
+            try
+            {
+                var loggedInUserEmail = _mapper.Map<EmailAddress>(emailAddressVm);
+                historyDatesOfUser = _mapper.Map<List<UserNewsVm>>(_newsopediaRepository.RetrieveUserHistoryDates(loggedInUserEmail));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return historyDatesOfUser;
         }
-        //------------------------------------------------
-        ///-This part of code uses tables from 'Test' database.
-        //-This is migrated to 'NewsopediaOld' database
-        //------------------------------------------------
-        //public List<DateUrlVm> RetrieveNewsLinks(DateUrlVm dateUrlVm)
-        //{
-        //    var dateClickedByUser = _mapper.Map<DateUrl>(dateUrlVm);
-        //   List<DateUrlVm> dateUrlVms =_mapper.Map<List<DateUrlVm>>(_newsopediaRepository.RetrieveNewsLinksFromDB(dateClickedByUser));
-
-        //    return dateUrlVms;
-        //}
-        //------------------------------------------------------
-        //-Gets the user date and news Id, to display the news that were 
-        //viewed by the user earlier
-        //----------------------------------------------------
-
-        public List<ConcatenatedTableVm> RetrieveNewsHistory(UserNewsVm userNewsVm)
+        /// <summary>
+        /// Retrieves all the news articles viewed by the user for a particular date clicked.
+        /// </summary>
+        /// <param name="userNewsVm"></param>
+        /// <returns></returns>
+        public List<ConcatenatedTableVm> RetrieveNewsFromHistory(UserNewsVm userNewsVm)
         {
-            var dateClickedByUser = _mapper.Map<UserNewsTable>(userNewsVm);
-            List<ConcatenatedTableVm> newsViewed = _mapper.Map<List<ConcatenatedTableVm>>(_newsopediaRepository.RetrieveNewsFromDB(dateClickedByUser));
-            return newsViewed;
-    }
-        //------------------------------------------------
-        ///-This part of code uses tables from 'Test' database.
-        //-This is migrated to 'NewsopediaOld' database
-        //------------------------------------------------
-        //public void DeleteNewsItem(DateUrlVm dateUrlVm)
-        //{
-        //    var itemClickedByAdmin = _mapper.Map<DateUrl>(dateUrlVm);
-        //    _newsopediaRepository.DeleteNewsItemFromDB(itemClickedByAdmin);
-        //}
-        //--------------------------------------------
-        //Gets the NewsId to be deleted from screen
-        //Checks the UserNewsTable for its existence and deltes the 
-        //same
-        //--------------------------------------------------
-
+            var  newsArticlesOfUser = new List<ConcatenatedTableVm>();
+            try
+            {
+                var dateClickedByUser = _mapper.Map<UserNewsTable>(userNewsVm);
+                newsArticlesOfUser = _mapper.Map<List<ConcatenatedTableVm>>(_newsopediaRepository.RetrieveNewsFromDb(dateClickedByUser));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return newsArticlesOfUser;
+        }
+        /// <summary>
+        /// Admin deletes a news item by clicking delete button that is visible only to the admin
+        /// </summary>
+        /// <param name="userNews"></param>
         public void DeleteNewsItem(UserNewsVm userNews)
         {
-            var itemClickedByAdmin = _mapper.Map<UserNewsTable>(userNews);
-            _newsopediaRepository.DeleteNewsItemFromDB(itemClickedByAdmin);
+            try
+            {
+                var itemClickedByAdmin = _mapper.Map<UserNewsTable>(userNews);
+                _newsopediaRepository.DeleteNewsItemFromDb(itemClickedByAdmin);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
         }
-        public List<GetTopUsersVm> GetTopFiveUsers()
+        /// <summary>
+        /// Retrieves the top five users who have viewed the news articles from the application 
+        /// maximum number of times
+        /// </summary>
+        /// <returns></returns>
+        public List<GetTopUsersVm> GetTopThreeUsers()
         {
-            List<GetTopUsersVm> users = _mapper.Map <List<GetTopUsersVm>>(_newsopediaRepository.GetTopFiveUsersFromDB());
-          
-            return users;
-        }
-
+            var topUsers = new List<GetTopUsersVm>();
+            try
+            {
+                topUsers = _mapper.Map<List<GetTopUsersVm>>(_newsopediaRepository.GetTopThreeUsersFromDb());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+            return topUsers;
+        }        
     }
-
 }
+
+
+
+

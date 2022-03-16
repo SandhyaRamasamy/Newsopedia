@@ -10,9 +10,7 @@ namespace Newsopedia.Data.Entities
         [Key]
         public int UserId { get; set; }
         [Required]
-        
-        public string Email { get; set; }
-        
+        public string Email { get; set; }        
         public  string Password { get; set; }
         [StringLength(20, MinimumLength = 4)]
         public  string FirstName { get; set;}

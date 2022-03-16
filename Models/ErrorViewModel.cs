@@ -1,5 +1,3 @@
-using System;
-
 namespace Newsopedia.Models
 {
     public class ErrorViewModel

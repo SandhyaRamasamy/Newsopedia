@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Newsopedia.Data.Models
+namespace Newsopedia.Data.Entities
 {
-    public class JsonModel
+    public class NewsArticle
     {
-        public string Title { get; set; }
+        public string  Title{ get; set; }
         public string URL { get; set; }
         public string UserEmail { get; set; }
         public string Description { get; set; }

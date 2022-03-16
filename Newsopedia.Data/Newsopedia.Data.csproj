@@ -5,6 +5,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20211119162425_initialmigration.cs" />
+    <Compile Remove="Migrations\20211119162425_initialmigration.Designer.cs" />
+    <Compile Remove="Migrations\20211123100839_includednewDateUrlTable.cs" />
+    <Compile Remove="Migrations\20211123100839_includednewDateUrlTable.Designer.cs" />
+    <Compile Remove="Migrations\20211125182054_includedTitleField.cs" />
+    <Compile Remove="Migrations\20211125182054_includedTitleField.Designer.cs" />
+    <Compile Remove="Migrations\20211129083328_addedtwonewfields.cs" />
+    <Compile Remove="Migrations\20211129083328_addedtwonewfields.Designer.cs" />
+    <Compile Remove="Migrations\20211129085019_updateddateurltable.cs" />
+    <Compile Remove="Migrations\20211129085019_updateddateurltable.Designer.cs" />
+    <Compile Remove="Migrations\20211129145704_updateddatefieldtostring.cs" />
+    <Compile Remove="Migrations\20211129145704_updateddatefieldtostring.Designer.cs" />
+    <Compile Remove="Migrations\NewsopediaContextModelSnapshot.cs" />
+    <Compile Remove="NewsopediaContext.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.12" />

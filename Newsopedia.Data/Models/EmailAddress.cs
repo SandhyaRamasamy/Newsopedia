@@ -6,6 +6,6 @@ namespace Newsopedia.Data.Models
 {
     public class EmailAddress
     {
-        public string EmailAdd { get; set; }
+        public string EmailId { get; set; }
     }
 }

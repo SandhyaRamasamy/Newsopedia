@@ -6,10 +6,10 @@ namespace Newsopedia.Services.NewsopediaOldModels
 {
     public class UserNewsVm
     {
-        public int IdVm { get; set; }
-        public int UserNewsIdVm { get; set; }
-        public int UserIdVm { get; set; }
-        public int NewsIdVm { get; set; }
-        public string DateVm { get; set; }
+        public int Id { get; set; }
+        public int UserNewsId { get; set; }
+        public int UserId { get; set; }
+        public int NewsId { get; set; }
+        public string Date { get; set; }
     }
 }

@@ -5,16 +5,14 @@ using System.Text;
 namespace Newsopedia.Services.NewsopediaOldModels
 {
     public class ConcatenatedTableVm
-    {
-        
-            public int UserIdVm { get; set; }
-            public int NewsIdVm { get; set; }
-            public int UserNewsIdVm { get; set; }
-            public string DateVm { get; set; }
-            public string NewsUrlVm { get; set; }
-            public string NewsTitleVm { get; set; }
-            public string NewsDescriptionVm { get; set; }
-            public string NewsImageUrlVm { get; set; }
-        
+    { 
+            public int UserId { get; set; }
+            public int NewsId { get; set; }
+            public int UserNewsId { get; set; }
+            public string Date { get; set; }
+            public string NewsUrl { get; set; }
+            public string NewsTitle { get; set; }
+            public string NewsDescription { get; set; }
+            public string NewsImageUrl { get; set; }      
     }
 }

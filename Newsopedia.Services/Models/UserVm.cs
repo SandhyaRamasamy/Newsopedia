@@ -7,16 +7,13 @@ namespace Newsopedia.Services.Models
 {
     public class UserVm
     {
-        
-        public int UserIdVm { get; set; }
+        public int UserId { get; set; }
         [Required]
-        
-        public string EmailVm { get; set; }
-     
-        public string  PasswordVm { get; set; }
+        public string Email { get; set; }
+        public string  Password { get; set; }
         [StringLength(20,MinimumLength =4)]
-        public string FirstNameVm { get; set; }
+        public string FirstName { get; set; }
         [StringLength(20, MinimumLength = 4)]
-        public string  LastNameVm { get; set; }
+        public string  LastName { get; set; }
     }
 }

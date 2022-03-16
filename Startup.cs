@@ -1,20 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newsopedia.Data;
+using Newsopedia.Data.Models;
 using Newsopedia.Services;
 using Newsopedia.Services.Mappings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Session;
-using Newsopedia.Data.Models;
 
 namespace Newsopedia
 {
@@ -36,12 +30,10 @@ namespace Newsopedia
             services.AddAutoMapper(typeof(NewsopediaMappingProfile));
             services.AddScoped<INewsopediaService, NewsopediaService>();
             services.AddScoped<INewsopediaRepository, NewsopediaRepository>();
-            /*services.AddDbContext<NewsopediaContext>(item => item.UseSqlServer(Configuration.GetConnectionString("TestDatabase")), ServiceLifetime.Scoped);*/
             services.AddDbContext<NewsopediaOldContext>(item => item.UseSqlServer(Configuration.GetConnectionString("NewsopediaOldDB")), ServiceLifetime.Scoped);
             services.AddScoped<ILogger>(x => x.GetRequiredService<ILogger<NewsopediaService>>());
             services.AddDistributedMemoryCache();
             services.AddSession();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,7 +50,9 @@ namespace Newsopedia
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            
             app.UseHttpsRedirection();
+
             app.UseStaticFiles();
 
             app.UseRouting();

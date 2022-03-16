@@ -11,7 +11,6 @@ namespace Newsopedia.Data.Models
         public int UserId { get; set; }
         public int NewsId { get; set; }
         public string Date { get; set; }
-
         public virtual NewsTable News { get; set; }
         public virtual User User { get; set; }
     }

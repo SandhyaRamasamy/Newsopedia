@@ -13,71 +13,64 @@ namespace Newsopedia.Services.Mappings
         {
             CreateMap<User, UserVm>()
                 .ForMember(dest =>
-                                    dest.UserIdVm,
+                                    dest.UserId,
                                     opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest =>
-                                    dest.EmailVm,
+                                    dest.Email,
                                     opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest =>
-                                    dest.PasswordVm,
+                                    dest.Password,
                                     opt => opt.MapFrom(src => src.Password))
                 .ForMember(dest =>
-                                    dest.FirstNameVm,
+                                    dest.FirstName,
                                     opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest =>
-                                    dest.LastNameVm,
+                                    dest.LastName,
                                     opt => opt.MapFrom(src => src.LastName))
                 .ReverseMap();
             CreateMap<DateUrl, DateUrlVm>()
                 .ForMember(dest =>
-                                    dest.DateUrlIDVm,
-                                    opt => opt.MapFrom(src => src.DateUrlID))
+                                    dest.DateUrlId,
+                                    opt => opt.MapFrom(src => src.DateUrlId))
                 .ForMember(dest =>
-                                    dest.UserIDVm,
-                                    opt => opt.MapFrom(src => src.UserID))
+                                    dest.UserId,
+                                    opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest =>
-                                    dest.DateVm,
+                                    dest.Date,
                                     opt => opt.MapFrom(src => src.Date))
                 .ForMember(dest =>
-                                    dest.NewsTitleVm,
+                                    dest.NewsTitle,
                                     opt => opt.MapFrom(src => src.NewsTitle))
                 .ForMember(dest =>
-                                    dest.NewsUrlVm,
+                                    dest.NewsUrl,
                                     opt => opt.MapFrom(src => src.NewsUrl))
                 .ForMember(dest =>
-                                    dest.NewsDescriptionvM,
+                                    dest.NewsDescription,
                                     opt => opt.MapFrom(src => src.NewsDescription))
                 .ForMember(dest =>
-                                    dest.NewsImageURLVm,
-                                    opt => opt.MapFrom(src => src.NewsImageURL))
+                                    dest.NewsImageUrl,
+                                    opt => opt.MapFrom(src => src.NewsImageUrl))
                 .ReverseMap();
-
-
-            CreateMap<JsonModel, JsonModelVm>()
+            CreateMap<NewsArticle, NewsArticleVm>()
                .ForMember(dest =>
-                                   dest.TitleVm,
+                                   dest.Title,
                                    opt => opt.MapFrom(src => src.Title))
                .ForMember(dest =>
-                                   dest.URLVm,
+                                   dest.Url,
                                    opt => opt.MapFrom(src => src.URL))
                .ForMember(dest =>
-                                   dest.UserEmailVm,
+                                   dest.UserEmail,
                                    opt => opt.MapFrom(src => src.UserEmail))
-               .ForMember(dest => dest.DescriptionVm,
+               .ForMember(dest => dest.Description,
                                   opt => opt.MapFrom( src=> src.Description))
-               .ForMember(dest => dest.URLToImageVm,
+               .ForMember(dest => dest.UrlToImage,
                                   opt => opt.MapFrom(src => src.URLToImage))
-
                .ReverseMap();
             CreateMap<EmailAddress, EmailAddressVm>()
                .ForMember(dest =>
-                                   dest.UserEmailaddressVm,
+                                   dest.UserEmailaddress,
                                    opt => opt.MapFrom(src => src.EmailAdd))
-               .ReverseMap();
-          
-
-
-
+               .ReverseMap();          
         }
     }
 }

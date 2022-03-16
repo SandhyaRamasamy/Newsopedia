@@ -1,16 +1,12 @@
-﻿@*@model IEnumerable<Newsopedia.Services.Models.DateUrlVm>*@
-@model IEnumerable<Newsopedia.Services.NewsopediaOldModels.ConcatenatedTableVm>    
+﻿@model IEnumerable<Newsopedia.Services.NewsopediaOldModels.ConcatenatedTableVm>
 
 @{
-
-
     if (Model != null)
     {
-        @*<span>Search History</span>*@
         var newsTitle = "";
         @foreach (var item in Model)
         {
-            if (@item.NewsTitleVm != newsTitle)
+            if (@item.NewsTitle != newsTitle)
             {
                 if (@ViewBag.sessionV == "admin")
                 {
@@ -18,111 +14,95 @@
                         <a href="#"> <i onclick="ShowPrevious()" class="fas fa-chevron-circle-left previous-icon"></i></a>
                         <a href="#"><i id="next-icon-id" onclick="ShowNext()" class="fas fa-chevron-circle-right next-icon"></i></a>
 
-                        <h3>@item.NewsTitleVm</h3>
-                        <img class="news-image" src="@item.NewsImageUrlVm" />
-                        <p class="news-description">@item.NewsDescriptionVm</p>
-                        <button class="Delete-btn" onclick="DeleteItem(@item.UserNewsIdVm)" type="button">Delete</button>
-
+                        <h3>@item.NewsTitle</h3>
+                        <img class="news-image" src="@item.NewsImageUrl" />
+                        <p class="news-description">@item.NewsDescription</p>
+                        <button class="Delete-btn" onclick="DeleteItem(@item.UserNewsId)" type="button">Delete</button>
                     </div>
-                    newsTitle = @item.NewsTitleVm;
-
+                    newsTitle = @item.NewsTitle;
                 }
                 else
                 {
                     <div class="full-news">
-                        <a href="#"><i onclick="ShowPrevious()" class="fas fa-chevron-circle-left previous-icon"></i></a>
-                        <a href="#"><i id="next-icon-id" onclick="ShowNext()" class="fas fa-chevron-circle-right next-icon"></i></a>
+                        <a href="#"><i onclick="ShowPreviousNewsItem()" class="fas fa-chevron-circle-left previous-icon"></i></a>
+                        <a href="#"><i id="next-icon-id" onclick="ShowNextNewsItem()" class="fas fa-chevron-circle-right next-icon"></i></a>
 
-                        <h3>@item.NewsTitleVm</h3>
-                        <img class="news-image" src="@item.NewsImageUrlVm" />
-                        <p class="news-description">@item.NewsDescriptionVm</p>
-                       
-
+                        <h3>@item.NewsTitle</h3>
+                        <img class="news-image" src="@item.NewsImageUrl" />
+                        <p class="news-description">@item.NewsDescription</p>
                     </div>
-                    newsTitle = @item.NewsTitleVm;
-
+                    newsTitle = @item.NewsTitle;
                 }
-
             }
-
-
-        }
-
+         }
     }
 }
 <script>
-        var visibleDiv=0;
-        console.log('visible Div', visibleDiv);
-        ShowDiv();
-        if (visibleDiv==$('.full-news').length - 1) {
-            $('.previous-icon').hide();
+    // function to display the news articles from list along with the previous and next buttons
+    // These news articles are retrieved from the database from user browse history
+    var indexOfRetrievedNewsList = 0;
+    ShowNewsArticle();
+    if (indexOfRetrievedNewsList == $('.full-news').length - 1) {
+        $('.previous-icon').hide();
+        $('.next-icon').hide();
+    }
+    else {
+        $('.previous-icon').hide();
+    }
+    function ShowNextNewsItem()
+    {
+        indexOfRetrievedNewsList++;
+        if (indexOfRetrievedNewsList == $('.full-news').length - 1) {
+            ShowNewsArticle();
             $('.next-icon').hide();
+            $('.previous-icon').show();
         }
         else {
+            ShowNewsArticle();
+            ShowBothIcons();
+        }
+    }
+    function ShowPreviousNewsItem()
+    {
+        indexOfRetrievedNewsList--;
+        if (indexOfRetrievedNewsList == 0) {
+            ShowNewsArticle();
             $('.previous-icon').hide();
+            $('.next-icon').show();
         }
-        function ShowNext() {
-            visibleDiv++;
-            console.log('visible Div', visibleDiv);
-            if (visibleDiv == $('.full-news').length - 1)
-            {
-                ShowDiv();
-                $('.next-icon').hide();
-                $('.previous-icon').show();
-            }
-            else {
-                ShowDiv();
-                ShowBothIcons();
-            }
+        else {
+            ShowNewsArticle();
+            ShowBothIcons();
         }
-        function ShowPrevious() {
-            visibleDiv--;
-            console.log('visible Div', visibleDiv);
-            if (visibleDiv == 0)
-            {
-                ShowDiv();
-                $('.previous-icon').hide();
-                $('.next-icon').show();
-            }
-            else {
-                ShowDiv();
-                ShowBothIcons();
-            }   
-        }
-        function DeleteItem(user_news_id) {
-            var userNewsId = user_news_id;
-            console.log(userNewsId);
-                var itemClicked={
-                    //NewsIdVm: itemId,
-                    //DateVm: itemDate
-                    UserNewsIdVm: userNewsId
-                        }
-                console.log(itemClicked);
-            $.ajax({
-                url: "/Home/DeleteItem/" ,
-                method: "POST" ,
-                data: itemClicked,
-                success: function (data) {
-                    console.log(data);
-                    $('.delete-admin-news').html(data);
-                    $('#History-Links-Partial').empty();
-                    $('.news-list').empty();
-                },
-                error: function (err) {
-                console.log("this is error:" + err);
-                    }
-            })
-        }
-    function ShowDiv()
+    }
+    function ShowNewsArticle()
     {
-      $('.full-news').hide();
-       $('.full-news:eq(' + visibleDiv + ')' ).show();
-     }
-    function ShowBothIcons()
-    {
+        $('.full-news').hide();
+        $('.full-news:eq(' + indexOfRetrievedNewsList + ')').show();
+    }
+    function ShowBothIcons() {
         $('.previous-icon').show();
         $('.next-icon').show();
-     }
-      
+    }
+    // Function to delete a news item by admin
+    function DeleteItem(user_news_id) {
+        var userNewsId = user_news_id;
+        var itemClicked = {
+            UserNewsId: userNewsId
+        };
+        $.ajax({
+            url: "/Home/DeleteNewsItem/",
+            method: "POST",
+            data: itemClicked,
+            success: function (data) {
+                console.log(data);
+                $('.delete-admin-news').html(data);
+                $('#History-Links-Partial').empty();
+                $('.news-list').empty();
+            },
+            error: function (err) {
+                console.log("this is error:" + err);
+            }
+        })
+    }    
 </script>
-

@@ -8,13 +8,12 @@ namespace Newsopedia.Data.Entities
     public class DateUrl
     { 
         [Key]
-        public int DateUrlID { get; set; }
-        public User UserID { get; set; }
+        public int DateUrlId { get; set; }
+        public User UserId { get; set; }
         public string Date { get; set; }
         public string NewsUrl { get; set; }
         public string NewsTitle { get; set; }
         public string NewsDescription { get; set; }
-        public string NewsImageURL { get; set; }
-
+        public string NewsImageUrl { get; set; }
     }
 }

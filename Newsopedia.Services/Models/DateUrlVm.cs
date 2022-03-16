@@ -6,12 +6,12 @@ namespace Newsopedia.Services.Models
 {
     public class DateUrlVm
     {
-        public int DateUrlIDVm{ get; set; }
-        public UserVm UserIDVm { get; set; }
-        public string DateVm { get; set; }
-        public string NewsUrlVm { get; set; }
-        public string NewsTitleVm { get; set; }
-        public string NewsDescriptionvM { get; set; }
-        public string NewsImageURLVm { get; set; }
+        public int DateUrlId{ get; set; }
+        public UserVm UserId { get; set; }
+        public string Date { get; set; }
+        public string NewsUrl { get; set; }
+        public string NewsTitle { get; set; }
+        public string NewsDescription { get; set; }
+        public string NewsImageUrl { get; set; }
     }
 }

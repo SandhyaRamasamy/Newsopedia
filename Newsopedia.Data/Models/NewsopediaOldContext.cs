@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Data.Entity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
 namespace Newsopedia.Data.Models
 {
-    public partial class NewsopediaOldContext : DbContext
+    public partial class NewsopediaOldContext : Microsoft.EntityFrameworkCore.DbContext
     {
         public NewsopediaOldContext()
         {
@@ -17,10 +17,10 @@ namespace Newsopedia.Data.Models
         {
         }
 
-        public virtual DbSet<NewsTable> NewsTables { get; set; }
-        public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<UserNewsTable> UserNewsTables { get; set; }
-        public DbSet<GetTopUsers> GetTopUsers { get; set; }
+        public virtual Microsoft.EntityFrameworkCore.DbSet<NewsTable> NewsTables { get; set; }
+        public virtual Microsoft.EntityFrameworkCore.DbSet<User> Users { get; set; }
+        public virtual Microsoft.EntityFrameworkCore.DbSet<UserNewsTable> UserNewsTables { get; set; }
+        public Microsoft.EntityFrameworkCore.DbSet<GetTopUsers> GetTopUsers { get; set; }
    
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

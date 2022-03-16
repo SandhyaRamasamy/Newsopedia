@@ -1,9 +1,7 @@
-﻿@*@model Newsopedia.Services.Models.UserVm*@
-@model Newsopedia.Services.NewsopediaOldModels.NewsopediaOldUserVm
+﻿@model Newsopedia.Services.NewsopediaOldModels.NewsopediaOldUserVm
 <h2>Registration</h2>
 <form asp-action="RegisterFunction">
     <table>
-        
         <tr>
             <td>
                 <span>
@@ -11,7 +9,7 @@
                 </span>
             </td>
             <td>
-                <input asp-for="FirstNameVm" placeholder="First Name" />
+                <input asp-for="FirstName" placeholder="First Name" />
             </td>
         </tr>
         <tr>
@@ -21,7 +19,7 @@
                 </span>
             </td>
             <td>
-                <input asp-for="LastNameVm" placeholder="Last Name" />
+                <input asp-for="LastName" placeholder="Last Name" />
             </td>
         </tr>
         <tr>
@@ -31,7 +29,7 @@
                 </span>
             </td>
             <td>
-                <input asp-for="EmailVm" placeholder="email address" />
+                <input asp-for="Email" placeholder="email address" />
             </td>
         </tr>
         <tr>
@@ -41,19 +39,9 @@
                 </span>
             </td>
             <td>
-                <input asp-for="PasswordVm" placeholder="password" />
+                <input asp-for="Password" placeholder="password" />
             </td>
         </tr>
-        @*<tr>
-            <td>
-                <span>
-                    Confirm Password
-                </span>
-            </td>
-            <td>
-                <input type="password" placeholder="Confirm password" />
-            </td>
-        </tr>*@
     </table>
     <button type="submit">Register</button>
 </form>
